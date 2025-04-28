@@ -1,0 +1,29 @@
+services:
+  mongodb-msvc-details-order:
+    image: mongo:8.0
+    container_name: mongodb-msvc-details-order
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gad-dev
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: msvc-details-order
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data_details:/data/db
+
+  redis-msvc-details-order:
+    image: redis:7.0-alpine
+    container_name: redis-msvc-details-order
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data_msvc-details-order:/data
+    depends_on:
+      - mongodb-msvc-details-order
+
+volumes:
+  mongodb_data_details:
+    driver: local
+  redis_data_msvc-details-order:

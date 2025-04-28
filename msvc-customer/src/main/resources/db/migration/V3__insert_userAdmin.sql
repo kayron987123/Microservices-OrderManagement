@@ -1,0 +1,2 @@
+INSERT INTO customers (uuid_customer, name, last_name, password, email, phone) VALUES (gen_random_uuid(), 'Juan', 'Perez', 'admin123', 'admin@gmail.com', '987654321');
+INSERT INTO customers_roles (id_customer, id_role) VALUES (1, 1);

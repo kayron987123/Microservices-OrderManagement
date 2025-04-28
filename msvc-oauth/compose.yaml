@@ -1,0 +1,12 @@
+services:
+  redis-msvc-oauth:
+    image: redis:7.0-alpine
+    container_name: redis-msvc-oauth
+    restart: always
+    ports:
+      - "6383:6379"
+    volumes:
+      - redis_data_msvc-oauth:/data
+
+volumes:
+  redis_data_msvc-oauth:

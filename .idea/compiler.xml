@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="msvc-gateway" />
+        <module name="config-server" />
+        <module name="eureka-server" />
+      </profile>
+      <profile name="Annotation profile for msvc-details-order" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath>
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="msvc-details-order" />
+        <module name="msvc-customer" />
+        <module name="msvc-orders" />
+        <module name="msvc-products" />
+        <module name="msvc-oauth" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="config-server" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="msvc-customer" options="-parameters" />
+      <module name="msvc-details-order" options="-parameters" />
+      <module name="msvc-gateway" options="-parameters" />
+      <module name="msvc-oauth" options="-parameters" />
+      <module name="msvc-orders" options="-parameters" />
+      <module name="msvc-products" options="-parameters" />
+    </option>
+  </component>
+</project>

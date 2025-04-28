@@ -1,0 +1,168 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9100
+      client:
+        registration:
+          client-gateway-app:
+            provider: spring
+            client-id: client-gateway-app
+            client-secret: 12345
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/client-gateway-app
+            scope:
+              - openid
+              - profile
+            client-name: client-app
+        provider:
+          spring:
+            issuer-uri: http://localhost:9100
+  cloud:
+    gateway:
+      routes:
+        - id: msvc-products-swagger
+          uri: lb://msvc-products
+          predicates:
+            - Path=/msvc-products/swagger-ui.html
+            - Path=/msvc-products/swagger-ui.html/**
+            - Path=/msvc-products/v3/api-docs
+        - id: msvc-products
+          uri: lb://msvc-products
+          predicates:
+            - Path=/api/v1/products/**
+            - Method=GET
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ProductCircuitBreaker
+                fallbackUri: forward:/api/v1/fallback/products
+        - id: msvc-customers
+          uri: lb://msvc-customer
+          predicates:
+            - Path=/api/v1/customers/**
+            - Method=GET,POST,PUT
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: CustomerCircuitBreaker
+                fallbackUri: forward:/api/v1/fallback/customers
+                statusCodes: 500
+        - id: msvc-oauth
+          uri: lb://msvc-oauth
+          predicates:
+            - Path=/api/v1/oauth/**
+            - Method=GET,POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - name: CircuitBreaker
+              args:
+                name: OauthCircuitBreaker
+                fallbackUri: forward:/api/v1/fallback/oauth
+        - id: msvc-orders
+          uri: lb://msvc-orders
+          predicates:
+            - Path=/api/v1/orders/**
+            - Method=GET,POST,PUT,DELETE
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: OrderCircuitBreaker
+                fallbackUri: forward:/api/v1/fallback/orders
+        - id: msvc-details-order
+          uri: lb://msvc-details-order
+          predicates:
+            - Path=/api/v1/order-details/**
+            - Method=POST
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: OrderDetailsCircuitBreaker
+                fallbackUri: forward:/api/v1/fallback/order-details
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      OauthCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.net.ConnectException
+          - java.util.concurrent.TimeoutException
+      OrderCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.net.ConnectException
+          - java.util.concurrent.TimeoutException
+      OrderDetailsCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.net.ConnectException
+          - java.util.concurrent.TimeoutException
+      ProductCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.net.ConnectException
+          - java.util.concurrent.TimeoutException
+      CustomerCircuitBreaker:
+        register-health-indicator: true
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 30
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        record-exceptions:
+          - java.net.ConnectException
+          - java.util.concurrent.TimeoutException
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+custom:
+  path: /api/v1
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    diskspace:
+      enabled: true
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    reactor.netty: DEBUG
+    io.github.resilience4j: DEBUG

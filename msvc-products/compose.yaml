@@ -1,0 +1,31 @@
+services:
+  mysql-msvc-products:
+    image: mysql:8.0
+    container_name: mysql-msvc-products
+    restart: always
+    environment:
+      MYSQL_DATABASE: msvc-products
+      MYSQL_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: gad-dev
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data_msvc-products:/var/lib/mysql
+
+  redis-msvc-products:
+    image: redis:7.0-alpine
+    container_name: redis-msvc-products
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_msvc-products:/data
+    depends_on:
+      - mysql-msvc-products
+
+volumes:
+  mysql_data_msvc-products:
+  redis_data_msvc-products:
+
+

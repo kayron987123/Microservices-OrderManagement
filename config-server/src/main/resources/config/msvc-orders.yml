@@ -1,0 +1,76 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6381
+      connect-timeout: 2000
+      client-type: jedis
+    mongodb:
+      host: localhost
+      port: 27017
+      database: msvc-orders
+      username: gad-dev
+      password: 12345
+    cache:
+      type: redis
+  docker:
+    compose:
+      file: ./msvc-orders/compose.yaml
+
+eureka:
+  client:
+    service-url:
+      DefaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+server:
+  port: ${PORT:0}
+
+rsa:
+  key:
+    public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAredepgy3Z3iL/xl48Bu52B4R8Zd8ZgFZeTOGl89v7Z3QI9QlTVXtkE4LbaUuAgQrByDi0Hp5uqGgQi1iYOaV/bQW0rO1uv0QmIXER65XQzzlomR+nYDEDUCBxc0PCYXv+iKlLxVE2EtQ+PYICagqVM93hEfqYNcuGCLD39bqm2Z3VphbBeEq9XIbjDQE1RqxoFXWUUvD1ivmBY/kCmcIntKKQqUPpy9VdNFFy8IEAEbmO8uiquvoTyACg3wmkhnGdfaTHSdWwg2y1iBN5YWMDozg8CuVHO2FDJu83FlpBlhjrcgo8N+ANQfRVs2gwHyHM3+xYyijj5qoryBH+xNpqwIDAQAB
+
+custom:
+  path: /api/v1
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 6
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 4
+        slow-call-duration-threshold: 3s
+        slow-call-rate-threshold: 50
+    instances:
+      updateOrderCircuitBreaker:
+        base-config: default
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+        retry-exceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+    instances:
+      updateOrderRetry:
+        base-config: default
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    diskspace:
+      enabled: true
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true

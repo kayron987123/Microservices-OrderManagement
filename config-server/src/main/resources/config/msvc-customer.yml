@@ -1,0 +1,57 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres-msvc-customers:5432/msvc-customers
+    username: gad-dev
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6382
+      connect-timeout: 2000
+      client-type: jedis
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  docker:
+    compose:
+      file: ./msvc-customer/compose.yaml
+
+rsa:
+  key:
+    public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAredepgy3Z3iL/xl48Bu52B4R8Zd8ZgFZeTOGl89v7Z3QI9QlTVXtkE4LbaUuAgQrByDi0Hp5uqGgQi1iYOaV/bQW0rO1uv0QmIXER65XQzzlomR+nYDEDUCBxc0PCYXv+iKlLxVE2EtQ+PYICagqVM93hEfqYNcuGCLD39bqm2Z3VphbBeEq9XIbjDQE1RqxoFXWUUvD1ivmBY/kCmcIntKKQqUPpy9VdNFFy8IEAEbmO8uiquvoTyACg3wmkhnGdfaTHSdWwg2y1iBN5YWMDozg8CuVHO2FDJu83FlpBlhjrcgo8N+ANQfRVs2gwHyHM3+xYyijj5qoryBH+xNpqwIDAQAB
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+server:
+  port: ${PORT:0}
+
+custom:
+  path: /api/v1
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    diskspace:
+      enabled: true
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
