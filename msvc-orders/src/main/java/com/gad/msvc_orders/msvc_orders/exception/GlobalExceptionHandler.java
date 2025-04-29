@@ -2,27 +2,58 @@ package com.gad.msvc_orders.msvc_orders.exception;
 
 import com.gad.msvc_orders.msvc_orders.dto.DataResponse;
 import com.gad.msvc_orders.msvc_orders.utils.UtilsMethods;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private static final String TEXT_FIELD = "field";
+    private static final String TEXT_MESSAGES = "messages";
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<DataResponse> handlerValidationException(ConstraintViolationException ex) {
-        List<String> errors = ex.getConstraintViolations() == null ?
-                Collections.singletonList(ex.getMessage()) :
-                ex.getConstraintViolations()
-                        .stream()
-                        .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                        .toList();
+        List<Map<String, Object>> errors;
+
+        if (ex.getConstraintViolations() == null) {
+            errors = List.of(Map.of(
+                    TEXT_FIELD, "unknown",
+                    TEXT_MESSAGES, List.of(ex.getMessage())
+            ));
+        } else {
+            errors = ex.getConstraintViolations()
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            violation -> {
+                                String path = violation.getPropertyPath().toString();
+                                int lastDot = path.lastIndexOf('.');
+                                return lastDot != -1 ? path.substring(lastDot + 1) : path;
+                            },
+                            LinkedHashMap::new,
+                            Collectors.mapping(
+                                    ConstraintViolation::getMessage,
+                                    Collectors.toList()
+                            )
+                    ))
+                    .entrySet()
+                    .stream()
+                    .map(entry -> {
+                        Map<String, Object> errorMap = new LinkedHashMap<>();
+                        errorMap.put(TEXT_FIELD, entry.getKey());
+                        errorMap.put(TEXT_MESSAGES, entry.getValue().stream().sorted().toList());
+                        return errorMap;
+                    })
+                    .toList();
+        }
 
         return ResponseEntity.badRequest()
                 .body(new DataResponse(BAD_REQUEST.value(),

@@ -9,7 +9,7 @@ import com.gad.msvc_products.utils.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +30,14 @@ public class ProductService {
     }
 
     @Cacheable(value = "listProductsByNameAndPriceAndStock",
-            key = "'page:' + #page + '-size:' + #size + '-name:' + #name + '-min:' + #minPrice + '-max:' + #maxPrice + '-stock:' + #stock")
+            key = "'page:' + #pageable.pageNumber + '-size:' + #pageable.pageSize + '-sort:' + #pageable.sort.toString() + '-name:' + #name + '-min:' + #minPrice + '-max:' + #maxPrice + '-stock:' + #stock")
     @Transactional(readOnly = true)
-    public ProductPageDTO getAllProductsByNameAndPriceAndStock(int page, int size, String name, BigDecimal minPrice, BigDecimal maxPrice, Integer stock) {
-        if (name != null && !name.isEmpty() && productRepository.findProductsByNameContainingIgnoreCase(PageRequest.of(page, size), name).isEmpty()) {
+    public ProductPageDTO getAllProductsByNameAndPriceAndStock(Pageable pageable, String name, BigDecimal minPrice, BigDecimal maxPrice, Integer stock) {
+        if (name != null && !name.isEmpty() && productRepository.findProductsByNameContainingIgnoreCase(pageable, name).isEmpty()) {
             throw new ProductNotFoundException("Product not found with word: " + name);
         }
 
-        Page<ProductDTO> products = productRepository.findProductsByNameAndPriceAndStock(PageRequest.of(page, size), name, minPrice, maxPrice, stock)
+        Page<ProductDTO> products = productRepository.findProductsByNameAndPriceAndStock(pageable, name, minPrice, maxPrice, stock)
                 .map(ProductMapper::toDTO);
 
         if (products.isEmpty()) {

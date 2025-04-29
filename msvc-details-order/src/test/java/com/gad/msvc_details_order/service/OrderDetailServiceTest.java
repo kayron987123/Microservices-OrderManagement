@@ -115,7 +115,7 @@ class OrderDetailServiceTest {
         when(productServiceFeign.findProductByUuid(any())).thenReturn(product);
         when(orderDetailRepository.findByUuidDetail(uuidOrderDetail)).thenReturn(Optional.of(orderDetail));
 
-        OrderDetailDTO orderDetailDTO = orderDetailService.findOrderDetailByUuid(uuidOrderDetail);
+        OrderDetailDTO orderDetailDTO = orderDetailService.findOrderDetailByUuid(uuidOrderDetail.toString());
         System.out.println(orderDetailDTO);
         System.out.println(orderDetail);
         System.out.println(product);
@@ -135,7 +135,7 @@ class OrderDetailServiceTest {
         UUID uuidOrderDetail = UUID.randomUUID();
         when(orderDetailRepository.findByUuidDetail(uuidOrderDetail)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(OrderNotFoundException.class, () -> orderDetailService.findOrderDetailByUuid(uuidOrderDetail));
+        Exception exception = assertThrows(OrderNotFoundException.class, () -> orderDetailService.findOrderDetailByUuid(uuidOrderDetail.toString()));
 
         assertEquals("Order detail with uuid " + uuidOrderDetail + " not found", exception.getMessage());
         verify(orderDetailRepository, times(1)).findByUuidDetail(uuidOrderDetail);

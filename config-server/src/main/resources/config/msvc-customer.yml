@@ -50,8 +50,3 @@ management:
   health:
     diskspace:
       enabled: true
-springdoc:
-  swagger-ui:
-    operationsSorter: method
-    tagsSorter: alpha
-    display-request-duration: true

@@ -46,11 +46,3 @@ management:
   health:
     diskspace:
       enabled: true
-springdoc:
-  swagger-ui:
-    path: /msvc-products/swagger-ui.html
-    operationsSorter: method
-    tagsSorter: alpha
-    display-request-duration: true
-  api-docs:
-    path: /msvc-products/v3/api-docs

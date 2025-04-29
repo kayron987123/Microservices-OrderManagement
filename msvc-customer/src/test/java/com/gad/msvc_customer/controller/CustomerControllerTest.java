@@ -230,7 +230,7 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.errors[2].field").value("password"))
                 .andExpect(jsonPath("$.errors[2].messages[0]").value("Password must be between 5 and 50 characters"))
                 .andExpect(jsonPath("$.errors[3].field").value("phone"))
-                .andExpect(jsonPath("$.errors[3].messages[0]").value("Phone number must be exactly 9 digits"))
+                .andExpect(jsonPath("$.errors[3].messages[0]").value("Phone number must be exactly 9 digits and start with 9"))
                 .andExpect(jsonPath("$.errors[4].field").value("lastName"))
                 .andExpect(jsonPath("$.errors[4].messages[0]").value("Last name must be between 3 and 50 characters"));
 

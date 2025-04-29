@@ -214,7 +214,7 @@ class OrderDetailControllerTest {
     @Test
     @DisplayName("Should return status 200 and return orderDetailDto when uuid is valid")
     void getOrderDetailByUuid_WhenUuidIsValid_ReturnsStatus200() throws Exception {
-        when(orderDetailService.findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()))).thenReturn(orderDetailDTO);
+        when(orderDetailService.findOrderDetailByUuid(createOrderDetailRequest.uuidProduct())).thenReturn(orderDetailDTO);
 
         mockMvc.perform(get("/api/v1/order-details/" + createOrderDetailRequest.uuidProduct())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -230,13 +230,13 @@ class OrderDetailControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errors").doesNotExist());
 
-        verify(orderDetailService, times(1)).findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()));
+        verify(orderDetailService, times(1)).findOrderDetailByUuid(createOrderDetailRequest.uuidProduct());
     }
 
     @Test
     @DisplayName("Should return status 404 and throw OrderNotFoundException when order detail not found")
     void getOrderDetailByUuid_WhenOrderDetailNotFound_ReturnsStatus404AndThrowOrderNotFoundException() throws Exception {
-        when(orderDetailService.findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()))).thenThrow(new OrderNotFoundException("Order detail not found"));
+        when(orderDetailService.findOrderDetailByUuid(createOrderDetailRequest.uuidProduct())).thenThrow(new OrderNotFoundException("Order detail not found"));
 
         mockMvc.perform(get("/api/v1/order-details/" + createOrderDetailRequest.uuidProduct())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -248,13 +248,13 @@ class OrderDetailControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errors").doesNotExist());
 
-        verify(orderDetailService, times(1)).findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()));
+        verify(orderDetailService, times(1)).findOrderDetailByUuid(createOrderDetailRequest.uuidProduct());
     }
 
     @Test
     @DisplayName("Should return status 404 and throw OrderNotFoundException when ProductFeignService return product null")
     void getOrderDetailByUuid_WhenProductFeignServiceReturnProductNull_ReturnsStatus400AndThrowOrderNotFoundException() throws Exception {
-        when(orderDetailService.findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()))).thenThrow(new OrderNotFoundException("Product with uuid " + createOrderDetailRequest.uuidProduct() + " not found"));
+        when(orderDetailService.findOrderDetailByUuid(createOrderDetailRequest.uuidProduct())).thenThrow(new OrderNotFoundException("Product with uuid " + createOrderDetailRequest.uuidProduct() + " not found"));
 
         mockMvc.perform(get("/api/v1/order-details/" + createOrderDetailRequest.uuidProduct())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -266,13 +266,13 @@ class OrderDetailControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errors").doesNotExist());
 
-        verify(orderDetailService, times(1)).findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()));
+        verify(orderDetailService, times(1)).findOrderDetailByUuid(createOrderDetailRequest.uuidProduct());
     }
 
     @Test
     @DisplayName("Should return 404 and throw ProductFeignNotFoundException when ProductServiceFeign not found product")
     void getOrderDetailByUuid_WhenProductFeignNotFound_ReturnsStatus404AndThrowProductFeignNotFoundException() throws Exception {
-        when(orderDetailService.findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()))).thenThrow(new ProductFeignNotFoundException("Feign: Product with uuid " + createOrderDetailRequest.uuidProduct() + " not found"));
+        when(orderDetailService.findOrderDetailByUuid(createOrderDetailRequest.uuidProduct())).thenThrow(new ProductFeignNotFoundException("Feign: Product with uuid " + createOrderDetailRequest.uuidProduct() + " not found"));
 
         mockMvc.perform(get("/api/v1/order-details/" + createOrderDetailRequest.uuidProduct())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -284,13 +284,13 @@ class OrderDetailControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errors").doesNotExist());
 
-        verify(orderDetailService, times(1)).findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()));
+        verify(orderDetailService, times(1)).findOrderDetailByUuid(createOrderDetailRequest.uuidProduct());
     }
 
     @Test
     @DisplayName("Should return 404 and throw ProductFeignNotFoundException when ProductServiceFeign could not be obtained")
     void getOrderDetailByUuid_WhenProductFeignCouldNotBeObtained_ReturnsStatus404AndThrowProductFeignNotFoundException() throws Exception {
-        when(orderDetailService.findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()))).thenThrow(new OrderNotFoundException("Feign: Product information with UUID " + createOrderDetailRequest.uuidProduct() + " could not be obtained"));
+        when(orderDetailService.findOrderDetailByUuid(createOrderDetailRequest.uuidProduct())).thenThrow(new OrderNotFoundException("Feign: Product information with UUID " + createOrderDetailRequest.uuidProduct() + " could not be obtained"));
 
         mockMvc.perform(get("/api/v1/order-details/" + createOrderDetailRequest.uuidProduct())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -302,6 +302,6 @@ class OrderDetailControllerTest {
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.errors").doesNotExist());
 
-        verify(orderDetailService, times(1)).findOrderDetailByUuid(UUID.fromString(createOrderDetailRequest.uuidProduct()));
+        verify(orderDetailService, times(1)).findOrderDetailByUuid(createOrderDetailRequest.uuidProduct());
     }
 }

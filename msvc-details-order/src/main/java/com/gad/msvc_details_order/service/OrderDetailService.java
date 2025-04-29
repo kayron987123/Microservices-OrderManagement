@@ -58,8 +58,9 @@ public class OrderDetailService {
 
     @Cacheable(value = "OrderDetailByUuid", key = "#uuidOrderDetail")
     @Transactional(readOnly = true)
-    public OrderDetailDTO findOrderDetailByUuid(UUID uuidOrderDetail) {
-        OrderDetail orderDetail = orderDetailRepository.findByUuidDetail(uuidOrderDetail)
+    public OrderDetailDTO findOrderDetailByUuid(String uuidOrderDetail) {
+        UUID uuidOrderDetailString = UUID.fromString(uuidOrderDetail);
+        OrderDetail orderDetail = orderDetailRepository.findByUuidDetail(uuidOrderDetailString)
                 .orElseThrow(() -> new OrderNotFoundException("Order detail with uuid " + uuidOrderDetail + " not found"));
         Product product = productServiceFeign.findProductByUuid(orderDetail.getUuidProduct().toString());
         if (product == null) {

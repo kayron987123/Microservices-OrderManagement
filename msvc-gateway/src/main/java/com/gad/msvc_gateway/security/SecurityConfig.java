@@ -32,12 +32,11 @@ public class SecurityConfig {
                                 "/api/v1/customers/email/{email}",
                                 "/api/v1/order-details/{uuid}",
                                 "/api/v1/orders/{uuid}").hasRole("ADMIN")
-                        .pathMatchers(HttpMethod.POST, "/api/v1/customers/**").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/customers").permitAll()
                         .pathMatchers(HttpMethod.POST, "/api/v1/orders", "/api/v1/order-details").hasRole("USER")
-                        .pathMatchers(HttpMethod.PUT, "/api/v1/customers/{uuid}", "/api/v1/orders").hasRole("USER")
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/customers", "/api/v1/orders").hasRole("USER")
                         .pathMatchers(HttpMethod.DELETE, "/api/v1/orders/{uuid}").hasRole("USER")
                         .pathMatchers(HttpMethod.POST, "/actuator/refresh").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/msvc-products/swagger-ui.html", "/msvc-products/swagger-ui/**", "/msvc-products/v3/api-docs/**").permitAll()
                         .anyExchange().denyAll()
                 )
                 .cors(ServerHttpSecurity.CorsSpec::disable)

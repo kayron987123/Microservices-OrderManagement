@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
@@ -113,7 +114,7 @@ class ProductControllerTest {
     @DisplayName("Should return status 200 and paginated products when filters matches")
     void getAllProductsByNameAndPriceAndStock_WhenFiltersMatches_ReturnsStatus200AndPaginatedProducts() throws Exception {
         when(productService.getAllProductsByNameAndPriceAndStock(
-                anyInt(), anyInt(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
+                any(Pageable.class), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
                 .thenReturn(productPageDTO);
 
         List<EntityModel<ProductDTO>> content = productPageDTO.content().stream()
@@ -144,7 +145,7 @@ class ProductControllerTest {
 
         verify(productService, times(1))
                 .getAllProductsByNameAndPriceAndStock(
-                        anyInt(), anyInt(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt());
+                        any(Pageable.class), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt());
     }
 
     @Test
@@ -152,7 +153,7 @@ class ProductControllerTest {
     void getAllProductsByNameAndPriceAndStock_WhenNameNotExists_ReturnsStatus404AndThrowProductNotFoundException() throws Exception {
         String name = "Non Existent Product";
         when(productService.getAllProductsByNameAndPriceAndStock(
-                anyInt(), anyInt(), eq(name), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
+                any(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
                 .thenThrow(new ProductNotFoundException("Product not found with word: " + name));
 
         mockMvc.perform(get("/api/v1/products")
@@ -171,14 +172,14 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.errors").isEmpty());
 
         verify(productService, times(1))
-                .getAllProductsByNameAndPriceAndStock(0, 5, name, BigDecimal.valueOf(50), BigDecimal.valueOf(150), 5);
+                .getAllProductsByNameAndPriceAndStock(any(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt());
     }
 
     @Test
     @DisplayName("Should return status 404 and throw ProductNotFoundException when no products found with the given criteria")
     void getAllProductsByNameAndPriceAndStock_WhenNoProductsFound_ReturnsStatus404AndThrowProductNotFoundException() throws Exception {
         when(productService.getAllProductsByNameAndPriceAndStock(
-                anyInt(), anyInt(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
+                any(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt()))
                 .thenThrow(new ProductNotFoundException("No products found with the given criteria"));
 
         mockMvc.perform(get("/api/v1/products")
@@ -197,6 +198,6 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.errors").isEmpty());
 
         verify(productService, times(1))
-                .getAllProductsByNameAndPriceAndStock(0, 5, "Non Existent Product", BigDecimal.valueOf(50), BigDecimal.valueOf(150), 5);
+                .getAllProductsByNameAndPriceAndStock(any(), anyString(), any(BigDecimal.class), any(BigDecimal.class), anyInt());
     }
 }

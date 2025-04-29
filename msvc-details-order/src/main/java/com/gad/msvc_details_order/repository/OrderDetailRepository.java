@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface OrderDetailRepository extends MongoRepository<OrderDetail, UUID> {
-    Optional<OrderDetail> findByUuidDetail(UUID uuidOrder);
+    Optional<OrderDetail> findByUuidDetail(UUID uuidDetail);
 }

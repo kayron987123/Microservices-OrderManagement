@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -98,7 +99,7 @@ class ProductServiceTest {
         int stock = 5;
 
 
-        ProductPageDTO result = productService.getAllProductsByNameAndPriceAndStock(page, size, name, minPrice, maxPrice, stock);
+        ProductPageDTO result = productService.getAllProductsByNameAndPriceAndStock(Pageable.ofSize(size).withPage(page), name, minPrice, maxPrice, stock);
 
         assertNotNull(result);
         assertEquals(1, result.content().size());
@@ -141,7 +142,7 @@ class ProductServiceTest {
         int stock = 11;
 
         Exception exception = assertThrows(ProductNotFoundException.class, () ->
-                productService.getAllProductsByNameAndPriceAndStock(page, size, name, minPrice, maxPrice, stock));
+                productService.getAllProductsByNameAndPriceAndStock(Pageable.ofSize(size).withPage(page), name, minPrice, maxPrice, stock));
 
         assertEquals("No products found with the given criteria", exception.getMessage());
         verify(productRepository, times(1)).findProductsByNameAndPriceAndStock(
@@ -169,7 +170,7 @@ class ProductServiceTest {
         int stock = 5;
 
         Exception exception = assertThrows(ProductNotFoundException.class, () ->
-                productService.getAllProductsByNameAndPriceAndStock(page, size, name, minPrice, maxPrice, stock));
+                productService.getAllProductsByNameAndPriceAndStock(Pageable.ofSize(size).withPage(page), name, minPrice, maxPrice, stock));
 
         assertEquals("Product not found with word: " + name, exception.getMessage());
         verify(productRepository, times(1)).findProductsByNameContainingIgnoreCase(
