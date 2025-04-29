@@ -153,5 +153,7 @@ management:
     health:
       show-details: always
   health:
+    circuitbreakers:
+      enabled: true
     diskspace:
       enabled: true

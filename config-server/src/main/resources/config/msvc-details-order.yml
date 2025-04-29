@@ -43,6 +43,8 @@ resilience4j:
     instances:
       createOrderDetailCircuitBreaker:
         base-config: default
+      getOrderDetailByUuidCircuitBreaker:
+        base-config: default
   retry:
     configs:
       default:
@@ -54,6 +56,8 @@ resilience4j:
     instances:
       createOrderDetailRetry:
         base-config: default
+      getOrderDetailByUuidRetry:
+        base-config: default
 
 management:
   endpoints:
@@ -64,5 +68,7 @@ management:
     health:
       show-details: always
   health:
+    circuitbreakers:
+      enabled: true
     diskspace:
       enabled: true

@@ -33,6 +33,9 @@ public class OrderDetailController {
     @Retry(name = "createOrderDetailRetry", fallbackMethod = "createOrderDetailFallback")
     @PostMapping
     public ResponseEntity<DataResponse> createOrderDetail(@RequestBody @Valid CreateOrderDetailRequest createOrderDetailRequest) {
+        if ("00000000-0000-0000-0000-000000000000".equals(createOrderDetailRequest.uuidOrder()) || "00000000-0000-0000-0000-000000000000".equals(createOrderDetailRequest.uuidProduct())) {
+            throw new IllegalArgumentException("Simulated failure for Circuit Breaker");
+        }
         OrderDetailDTO orderDetailDTO = orderDetailService.createOrderDetail(createOrderDetailRequest);
         URI location = URI.create("api/v1/order-details/" + orderDetailDTO.uuidDetail());
 
@@ -45,6 +48,9 @@ public class OrderDetailController {
         ));
     }
 
+
+    @CircuitBreaker(name = "getOrderDetailByUuidCircuitBreaker", fallbackMethod = "getOrderDetailByUuidFallback")
+    @Retry(name = "getOrderDetailByUuidRetry", fallbackMethod = "getOrderDetailByUuidFallback")
     @GetMapping("/{uuid}")
     public ResponseEntity<DataResponse> getOrderDetailByUuid(@PathVariable @Pattern(regexp = Enums.PATTERN_REGEX, message = "Invalid UUID format")
                                                              @NotBlank(message = "Customer UUID cannot be empty") String uuid) {
@@ -59,6 +65,18 @@ public class OrderDetailController {
 
     public ResponseEntity<DataResponse> createOrderDetailFallback(CreateOrderDetailRequest createOrderDetailRequest, Throwable ex) {
         log.warn("Fallback triggered for createOrderDetail with request {}. Reason: {}", createOrderDetailRequest, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new DataResponse(
+                        HttpStatus.SERVICE_UNAVAILABLE.value(),
+                        "Order Detail service is currently unavailable. Please try again later.",
+                        null,
+                        FormatterDateTime.dateTimeNowFormatted(),
+                        Map.of("error", ex.getMessage())
+                ));
+    }
+
+    public ResponseEntity<DataResponse> getOrderDetailByUuidFallback(String uuid, Throwable ex) {
+        log.warn("Fallback triggered for getOrderDetailByUuid with uuid {}. Reason: {}", uuid, ex.getMessage());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(new DataResponse(
                         HttpStatus.SERVICE_UNAVAILABLE.value(),

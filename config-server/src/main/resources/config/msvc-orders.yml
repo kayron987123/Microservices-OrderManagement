@@ -38,12 +38,18 @@ resilience4j:
   circuitbreaker:
     configs:
       default:
+        register-health-indicator: true
         sliding-window-size: 5
         failure-rate-threshold: 30
         wait-duration-in-open-state: 5s
         permitted-number-of-calls-in-half-open-state: 2
         slow-call-duration-threshold: 3s
         slow-call-rate-threshold: 50
+        record-exceptions:
+          - java.lang.RuntimeException
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - feign.FeignException
     instances:
       updateOrderCircuitBreaker:
         base-config: default
@@ -53,8 +59,10 @@ resilience4j:
         max-attempts: 3
         wait-duration: 2s
         retry-exceptions:
+          - java.lang.RuntimeException
           - java.io.IOException
           - java.util.concurrent.TimeoutException
+          - feign.FeignException
     instances:
       updateOrderRetry:
         base-config: default
@@ -67,5 +75,7 @@ management:
     health:
       show-details: always
   health:
+    circuitbreakers:
+      enabled: true
     diskspace:
       enabled: true
