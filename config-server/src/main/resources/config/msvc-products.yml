@@ -31,7 +31,7 @@ eureka:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 server:
-  port: ${PORT:0}
+  port: 18031 #${PORT:0} for dynamic port
 
 custom:
   path: /api/v1

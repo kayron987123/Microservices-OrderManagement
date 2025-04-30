@@ -161,7 +161,7 @@ public class SecurityConfig {
         return new ImmutableJWKSet<>(jwkSet);
     }
 
-    private RSAPublicKey parsePublicKey(String publicKeyString)  {
+    private RSAPublicKey parsePublicKey(String publicKeyString) {
         try {
             byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyString);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
@@ -172,7 +172,7 @@ public class SecurityConfig {
         }
     }
 
-    private RSAPrivateKey parsePrivateKey(String privateKeyString)  {
+    private RSAPrivateKey parsePrivateKey(String privateKeyString) {
         try {
             byte[] privateKeyBytes = Base64.getDecoder().decode(privateKeyString);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
