@@ -127,7 +127,7 @@ public class SecurityConfig {
     @Bean
     RegisteredClientRepository registeredClientRepository() {
         TokenSettings tokenSettings = TokenSettings.builder()
-                .accessTokenTimeToLive(Duration.ofMinutes(15))
+                .accessTokenTimeToLive(Duration.ofDays(1))
                 .refreshTokenTimeToLive(Duration.ofDays(30))
                 .build();
 

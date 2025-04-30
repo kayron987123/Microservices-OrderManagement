@@ -33,9 +33,6 @@ public class OrderDetailController {
     @Retry(name = "createOrderDetailRetry", fallbackMethod = "createOrderDetailFallback")
     @PostMapping
     public ResponseEntity<DataResponse> createOrderDetail(@RequestBody @Valid CreateOrderDetailRequest createOrderDetailRequest) {
-        if ("00000000-0000-0000-0000-000000000000".equals(createOrderDetailRequest.uuidOrder()) || "00000000-0000-0000-0000-000000000000".equals(createOrderDetailRequest.uuidProduct())) {
-            throw new IllegalArgumentException("Simulated failure for Circuit Breaker");
-        }
         OrderDetailDTO orderDetailDTO = orderDetailService.createOrderDetail(createOrderDetailRequest);
         URI location = URI.create("api/v1/order-details/" + orderDetailDTO.uuidDetail());
 

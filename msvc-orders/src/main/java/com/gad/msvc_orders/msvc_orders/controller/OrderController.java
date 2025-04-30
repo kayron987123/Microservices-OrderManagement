@@ -64,9 +64,6 @@ public class OrderController {
                                                     @NotBlank(message = "Customer UUID cannot be empty") String uuidOrderDetail,
                                                     @RequestParam @Pattern(regexp = Enums.PATTERN_REGEX, message = "Invalid UUID format")
                                                     @NotBlank(message = "Customer UUID cannot be empty") String uuidOrder) {
-        if ("00000000-0000-0000-0000-000000000000".equals(uuidOrderDetail) || "00000000-0000-0000-0000-000000000000".equals(uuidOrder)) {
-            throw new IllegalArgumentException("Simulated failure for Circuit Breaker");
-        }
         OrderDTO orderDTO = orderService.updateTotalPrice(uuidOrderDetail, uuidOrder);
         URI location = URI.create("api/v1/orders/" + orderDTO.uuidOrder());
         return ResponseEntity.created(location)
