@@ -17,6 +17,7 @@ spring:
 
 server:
   port: 9100
+  hostname: 127.0.0.1
 
 eureka:
   client:

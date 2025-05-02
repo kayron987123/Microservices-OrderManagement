@@ -70,6 +70,9 @@ public class SecurityConfig {
     @Value("${client.secret}")
     private String clientSecret;
 
+    @Value("${server.hostname}")
+    private String hostName;
+
     @Bean
     @Order(1)
     SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
@@ -137,7 +140,7 @@ public class SecurityConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/client-gateway-app")
+                .redirectUri("http://" + hostName + ":8080/login/oauth2/code/client-gateway-app")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .tokenSettings(tokenSettings)

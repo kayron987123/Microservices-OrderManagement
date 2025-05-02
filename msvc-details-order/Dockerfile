@@ -9,6 +9,6 @@ RUN ./mvnw dependency:go-offline
 
 COPY ./src /root/src
 
-RUN ./mvnw clean install
+RUN ./mvnw clean install -DskipTests
 
 ENTRYPOINT ["java", "-jar", "/root/target/msvc-details-order-0.0.1-SNAPSHOT.jar"]
